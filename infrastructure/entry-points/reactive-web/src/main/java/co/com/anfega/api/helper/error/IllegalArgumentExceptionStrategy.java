@@ -1,6 +1,5 @@
 package co.com.anfega.api.helper.error;
 
-import com.crediya.library.error.ExceptionStrategy;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
