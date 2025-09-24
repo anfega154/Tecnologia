@@ -6,7 +6,7 @@ import org.springframework.data.relational.core.mapping.Column;
 import lombok.Data;
 
 @Data
-@Table(name = "tecnologias")
+@Table(name = "tecnologia")
 public class TechnologyEntity {
     @Id
     private Long id;

@@ -15,14 +15,6 @@ public class TechnologyUseCase implements TechnologyInputPort {
 
     @Override
     public Mono<Technology> save(Technology technology) {
-        return validateTechnology(technology)
-                .then(technologyRepository.findByName(technology.getName())
-                        .flatMap(existing -> Mono.<Technology>error(new IllegalArgumentException("El nombre ya existe")))
-                        .switchIfEmpty(technologyRepository.save(technology))
-                );
-    }
-
-    private Mono<Void> validateTechnology(Technology technology) {
         if (technology.getName() == null || technology.getName().isBlank()) {
             return Mono.error(new IllegalArgumentException("El nombre es obligatorio"));
         }
@@ -35,6 +27,8 @@ public class TechnologyUseCase implements TechnologyInputPort {
         if (technology.getDescription().length() > 90) {
             return Mono.error(new IllegalArgumentException("La descripción no puede superar los 90 caracteres"));
         }
-        return Mono.empty();
+        return technologyRepository.findByName(technology.getName())
+                .flatMap(existing -> Mono.<Technology>error(new IllegalStateException("El nombre ya existe")))
+                .switchIfEmpty(Mono.defer(() -> technologyRepository.save(technology)));
     }
 }

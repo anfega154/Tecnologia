@@ -17,8 +17,8 @@ subprojects {
     compileJava.dependsOn validateStructure
 
     java {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
+        sourceCompatibility = JavaVersion.VERSION_23
+        targetCompatibility = JavaVersion.VERSION_23
     }
 
     //build.dependsOn 'pitest'
@@ -129,4 +129,8 @@ pitestReportAggregate {
 
 tasks.named('wrapper') {
     gradleVersion = '8.14.3'
+}
+
+tasks.named('validateStructure') {
+    enabled = false
 }

@@ -1,6 +1,7 @@
 package co.com.anfega.api;
 
 import co.com.anfega.api.dto.CreateTechnologyDTO;
+import co.com.anfega.api.helper.api.BaseHandler;
 import co.com.anfega.api.mapper.TechnologyDTOMapper;
 import co.com.anfega.model.tecnology.gateways.TechnologyInputPort;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,7 @@ import reactor.core.publisher.Mono;
 
 @Component
 @RequiredArgsConstructor
-public class Handler {
+public class Handler extends BaseHandler {
     private final TechnologyInputPort technologyInputPort;
     private final TechnologyDTOMapper technologyDTOMapper;
 
@@ -20,6 +21,6 @@ public class Handler {
                 .map(technologyDTOMapper::toModel)
                 .flatMap(technologyInputPort::save)
                 .map(technologyDTOMapper::toResponse)
-                .flatMap(response -> ServerResponse.created(java.net.URI.create("")).bodyValue(response));
+                .flatMap(response -> created("Tecnologia creada con exito", response));
     }
 }

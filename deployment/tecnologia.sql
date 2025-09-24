@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS tecnologia
+(
+    id BIGSERIAL PRIMARY KEY,
+    nombre VARCHAR(50) UNIQUE NOT NULL,
+    descripcion VARCHAR(90) NOT NULL
+    );

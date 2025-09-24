@@ -10,6 +10,11 @@ public class Technology {
 
     }
 
+    public Technology(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
+
     public Technology(Long id, String name, String description) {
         this.id = id;
         this.name = name;
