@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jdk-alpine
+FROM eclipse-temurin:23-jdk-alpine
 
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 

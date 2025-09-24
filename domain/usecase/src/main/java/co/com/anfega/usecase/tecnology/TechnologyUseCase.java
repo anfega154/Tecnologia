@@ -28,7 +28,7 @@ public class TechnologyUseCase implements TechnologyInputPort {
             return Mono.error(new IllegalArgumentException("La descripción no puede superar los 90 caracteres"));
         }
         return technologyRepository.findByName(technology.getName())
-                .flatMap(existing -> Mono.<Technology>error(new RuntimeException("El nombre ya existe")))
+                .flatMap(existing -> Mono.<Technology>error(new IllegalStateException("El nombre ya existe")))
                 .switchIfEmpty(Mono.defer(() -> technologyRepository.save(technology)));
     }
 }
