@@ -1,10 +1,12 @@
 package co.com.anfega.api.config;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@Data
-@ConfigurationProperties(prefix = "routes.paths")
+@Getter
+@Setter
+@ConfigurationProperties(prefix = "routers.paths")
 public class TechnologyPath {
     private String technologies;
 }

@@ -12,7 +12,7 @@ buildCache {
     }
 }
 
-rootProject.name = 'Tecnoligia'
+rootProject.name = 'Tecnologia'
 
 include ':app-service'
 include ':model'

@@ -17,23 +17,23 @@ public class TechnologyUseCase implements TechnologyInputPort {
     public Mono<Technology> save(Technology technology) {
         return validateTechnology(technology)
                 .then(technologyRepository.findByName(technology.getName())
-                        .flatMap(existing -> Mono.<Technology>error(new IllegalArgumentException("El nombre ya existe")))
+                        .flatMap(existing -> Mono.<Technology>error(new RuntimeException("El nombre ya existe")))
                         .switchIfEmpty(technologyRepository.save(technology))
                 );
     }
 
     private Mono<Void> validateTechnology(Technology technology) {
         if (technology.getName() == null || technology.getName().isBlank()) {
-            return Mono.error(new IllegalArgumentException("El nombre es obligatorio"));
+            return Mono.error(new RuntimeException("El nombre es obligatorio"));
         }
         if (technology.getDescription() == null || technology.getDescription().isBlank()) {
-            return Mono.error(new IllegalArgumentException("La descripción es obligatoria"));
+            return Mono.error(new RuntimeException("La descripción es obligatoria"));
         }
         if (technology.getName().length() > 50) {
-            return Mono.error(new IllegalArgumentException("El nombre no puede superar los 50 caracteres"));
+            return Mono.error(new RuntimeException("El nombre no puede superar los 50 caracteres"));
         }
         if (technology.getDescription().length() > 90) {
-            return Mono.error(new IllegalArgumentException("La descripción no puede superar los 90 caracteres"));
+            return Mono.error(new RuntimeException("La descripción no puede superar los 90 caracteres"));
         }
         return Mono.empty();
     }
