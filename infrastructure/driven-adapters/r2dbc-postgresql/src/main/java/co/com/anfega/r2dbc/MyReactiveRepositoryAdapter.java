@@ -6,6 +6,7 @@ import co.com.anfega.r2dbc.entity.TechnologyEntity;
 import co.com.anfega.r2dbc.helper.ReactiveAdapterOperations;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Repository
@@ -40,6 +41,16 @@ public class MyReactiveRepositoryAdapter extends ReactiveAdapterOperations<
     @Override
     public Mono<Technology> findByName(String name) {
         return repository.findByNameIgnoreCase(name)
+                .map(entity -> new Technology(
+                        entity.getId(),
+                        entity.getName(),
+                        entity.getDescription()
+                ));
+    }
+
+    @Override
+    public Flux<Technology> findAll() {
+        return repository.findAll()
                 .map(entity -> new Technology(
                         entity.getId(),
                         entity.getName(),
