@@ -23,4 +23,11 @@ public class Handler extends BaseHandler {
                 .map(technologyDTOMapper::toResponse)
                 .flatMap(response -> created("Tecnologia creada con exito", response));
     }
+
+    public Mono<ServerResponse> listenGetAllTechnologiesUseCase(ServerRequest request) {
+        return technologyInputPort.findAll()
+                .map(technologyDTOMapper::toResponse)
+                .collectList()
+                .flatMap(list -> ok("Tecnologias encontradas", list));
+    }
 }

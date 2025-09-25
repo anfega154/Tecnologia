@@ -32,3 +32,12 @@ adapters:
 routers:
   paths:
     technologies: "/api/v1/tecnologias"
+
+#adapters:
+#  r2dbc:
+#    host: "localhost"
+#    port: "5432"
+#    database: "tecnologia"
+#    schema: "public"
+#    username: "postgres"
+#    password: "postgres"

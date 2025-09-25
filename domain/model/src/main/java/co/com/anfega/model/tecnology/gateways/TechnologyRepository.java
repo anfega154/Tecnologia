@@ -7,4 +7,5 @@ import reactor.core.publisher.Mono;
 public interface TechnologyRepository {
     Mono<Technology> save(Technology technology);
     Mono<Technology> findByName(String name);
+    Flux<Technology> findAll();
 }
