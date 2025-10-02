@@ -16,18 +16,6 @@ public class TechnologyUseCase implements TechnologyInputPort {
 
     @Override
     public Mono<Technology> save(Technology technology) {
-        if (technology.getName() == null || technology.getName().isBlank()) {
-            return Mono.error(new IllegalArgumentException("El nombre es obligatorio"));
-        }
-        if (technology.getDescription() == null || technology.getDescription().isBlank()) {
-            return Mono.error(new IllegalArgumentException("La descripción es obligatoria"));
-        }
-        if (technology.getName().length() > 50) {
-            return Mono.error(new IllegalArgumentException("El nombre no puede superar los 50 caracteres"));
-        }
-        if (technology.getDescription().length() > 90) {
-            return Mono.error(new IllegalArgumentException("La descripción no puede superar los 90 caracteres"));
-        }
         return technologyRepository.findByName(technology.getName())
                 .flatMap(existing -> Mono.<Technology>error(new IllegalStateException("El nombre ya existe")))
                 .switchIfEmpty(Mono.defer(() -> technologyRepository.save(technology)));
