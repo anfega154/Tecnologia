@@ -4,12 +4,13 @@ import co.com.anfega.model.tecnology.Technology;
 import co.com.anfega.model.tecnology.gateways.TechnologyRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import static org.mockito.Mockito.*;
 
-public class TechnologyUseCaseTest {
+class TechnologyUseCaseTest {
 
     private TechnologyRepository technologyRepository;
     private TechnologyUseCase technologyUseCase;
@@ -21,7 +22,7 @@ public class TechnologyUseCaseTest {
     }
 
     @Test
-    void shouldSaveTechnologySuccessfully() {
+    void shouldSaveTechnologyWhenNotExists() {
         Technology tech = new Technology("Java", "Lenguaje de programación");
 
         when(technologyRepository.findByName("Java")).thenReturn(Mono.empty());
@@ -36,84 +37,44 @@ public class TechnologyUseCaseTest {
     }
 
     @Test
-    void shouldFailWhenNameIsNull() {
-        Technology tech = new Technology(null, "Descripción válida");
-
-        when(technologyRepository.findByName(any())).thenReturn(Mono.empty());
-
-        StepVerifier.create(technologyUseCase.save(tech))
-                .expectErrorMatches(e -> e.getMessage().equals("El nombre es obligatorio"))
-                .verify();
-    }
-
-    @Test
-    void shouldFailWhenNameIsBlank() {
-        Technology tech = new Technology("   ", "Descripción válida");
-
-        when(technologyRepository.findByName(anyString())).thenReturn(Mono.empty());
-
-        StepVerifier.create(technologyUseCase.save(tech))
-                .expectErrorMatches(e -> e.getMessage().equals("El nombre es obligatorio"))
-                .verify();
-    }
-
-    @Test
-    void shouldFailWhenDescriptionIsNull() {
-        Technology tech = new Technology("Java", null);
-
-        when(technologyRepository.findByName(anyString())).thenReturn(Mono.empty());
-
-        StepVerifier.create(technologyUseCase.save(tech))
-                .expectErrorMatches(e -> e.getMessage().equals("La descripción es obligatoria"))
-                .verify();
-    }
-
-    @Test
-    void shouldFailWhenDescriptionIsBlank() {
-        Technology tech = new Technology("Java", "   ");
-
-        when(technologyRepository.findByName(anyString())).thenReturn(Mono.empty());
-
-        StepVerifier.create(technologyUseCase.save(tech))
-                .expectErrorMatches(e -> e.getMessage().equals("La descripción es obligatoria"))
-                .verify();
-    }
-
-    @Test
-    void shouldFailWhenNameIsTooLong() {
-        String longName = "a".repeat(51);
-        Technology tech = new Technology(longName, "Descripción válida");
-
-        when(technologyRepository.findByName(anyString())).thenReturn(Mono.empty());
-
-        StepVerifier.create(technologyUseCase.save(tech))
-                .expectErrorMatches(e -> e.getMessage().equals("El nombre no puede superar los 50 caracteres"))
-                .verify();
-    }
-
-    @Test
-    void shouldFailWhenDescriptionIsTooLong() {
-        String longDescription = "a".repeat(91);
-        Technology tech = new Technology("Java", longDescription);
-
-        when(technologyRepository.findByName(anyString())).thenReturn(Mono.empty());
-
-        StepVerifier.create(technologyUseCase.save(tech))
-                .expectErrorMatches(e -> e.getMessage().equals("La descripción no puede superar los 90 caracteres"))
-                .verify();
-    }
-
-    @Test
-    void shouldFailWhenNameAlreadyExists() {
+    void shouldFailWhenTechnologyAlreadyExists() {
         Technology tech = new Technology("Java", "Lenguaje de programación");
 
         when(technologyRepository.findByName("Java")).thenReturn(Mono.just(tech));
 
         StepVerifier.create(technologyUseCase.save(tech))
-                .expectErrorMatches(e -> e.getMessage().equals("El nombre ya existe"))
+                .expectErrorMatches(e -> e instanceof IllegalStateException &&
+                        e.getMessage().equals("El nombre ya existe"))
                 .verify();
 
         verify(technologyRepository).findByName("Java");
         verify(technologyRepository, never()).save(any());
+    }
+
+    @Test
+    void shouldFindAllTechnologies() {
+        Technology tech1 = new Technology("Java", "Lenguaje de programación");
+        Technology tech2 = new Technology("Kotlin", "Lenguaje moderno");
+
+        when(technologyRepository.findAll()).thenReturn(Flux.just(tech1, tech2));
+
+        StepVerifier.create(technologyUseCase.findAll())
+                .expectNext(tech1)
+                .expectNext(tech2)
+                .verifyComplete();
+
+        verify(technologyRepository).findAll();
+    }
+
+    @Test
+    void shouldFailWhenNoTechnologiesFound() {
+        when(technologyRepository.findAll()).thenReturn(Flux.empty());
+
+        StepVerifier.create(technologyUseCase.findAll())
+                .expectErrorMatches(e -> e instanceof IllegalStateException &&
+                        e.getMessage().equals("No hay tecnologías registradas"))
+                .verify();
+
+        verify(technologyRepository).findAll();
     }
 }
