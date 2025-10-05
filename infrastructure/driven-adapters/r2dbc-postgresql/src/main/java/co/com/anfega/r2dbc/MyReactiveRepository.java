@@ -5,6 +5,8 @@ import org.springframework.data.repository.query.ReactiveQueryByExampleExecutor;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 public interface MyReactiveRepository extends ReactiveCrudRepository<TechnologyEntity, Long>, ReactiveQueryByExampleExecutor<TechnologyEntity> {
     Mono<TechnologyEntity> findByNameIgnoreCase(String name);
 }

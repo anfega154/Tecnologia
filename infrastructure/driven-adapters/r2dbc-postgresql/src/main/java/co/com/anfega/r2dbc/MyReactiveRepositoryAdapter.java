@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @Repository
 public class MyReactiveRepositoryAdapter extends ReactiveAdapterOperations<
         Technology,
@@ -56,5 +58,12 @@ public class MyReactiveRepositoryAdapter extends ReactiveAdapterOperations<
                         entity.getName(),
                         entity.getDescription()
                 ));
+    }
+
+    @Override
+    public Mono<Void> deleteByIds(List<Long> ids) {
+        return repository.deleteAllById(ids)
+                .onErrorResume(e -> Mono.error(new IllegalStateException("Error eliminando tecnologias: " + e.getMessage())));
+
     }
 }

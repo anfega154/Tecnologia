@@ -6,6 +6,8 @@ import co.com.anfega.model.tecnology.gateways.TechnologyRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 public class TechnologyUseCase implements TechnologyInputPort {
 
     private final TechnologyRepository technologyRepository;
@@ -25,6 +27,11 @@ public class TechnologyUseCase implements TechnologyInputPort {
     public Flux<Technology> findAll() {
         return technologyRepository.findAll()
                 .switchIfEmpty(Flux.error(new IllegalStateException("No hay tecnologías registradas")));
+    }
+
+    @Override
+    public Mono<Void> deleteByIds(List<Long> ids) {
+        return technologyRepository.deleteByIds(ids);
     }
 
 }
