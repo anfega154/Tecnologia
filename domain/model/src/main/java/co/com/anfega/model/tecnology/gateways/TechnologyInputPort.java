@@ -4,7 +4,10 @@ import co.com.anfega.model.tecnology.Technology;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 public interface TechnologyInputPort {
     Mono<Technology> save(Technology technology);
     Flux<Technology> findAll();
+    Mono<Void> deleteByIds(List<Long> ids);
 }
