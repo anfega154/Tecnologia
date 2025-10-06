@@ -8,6 +8,10 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import static org.mockito.Mockito.*;
 
 class TechnologyUseCaseTest {
@@ -52,6 +56,21 @@ class TechnologyUseCaseTest {
     }
 
     @Test
+    void shouldPropagateErrorWhenRepositoryFailsOnSave() {
+        Technology tech = new Technology("Java", "Lenguaje de programación");
+
+        when(technologyRepository.findByName("Java")).thenReturn(Mono.empty());
+        when(technologyRepository.save(tech)).thenReturn(Mono.error(new RuntimeException("DB error")));
+
+        StepVerifier.create(technologyUseCase.save(tech))
+                .expectErrorMatches(e -> e instanceof RuntimeException &&
+                        e.getMessage().equals("DB error"))
+                .verify();
+
+        verify(technologyRepository).save(tech);
+    }
+
+    @Test
     void shouldFindAllTechnologies() {
         Technology tech1 = new Technology("Java", "Lenguaje de programación");
         Technology tech2 = new Technology("Kotlin", "Lenguaje moderno");
@@ -76,5 +95,56 @@ class TechnologyUseCaseTest {
                 .verify();
 
         verify(technologyRepository).findAll();
+    }
+
+    @Test
+    void shouldPropagateErrorWhenRepositoryFailsOnFindAll() {
+        when(technologyRepository.findAll()).thenReturn(Flux.error(new RuntimeException("DB error")));
+
+        StepVerifier.create(technologyUseCase.findAll())
+                .expectErrorMatches(e -> e instanceof RuntimeException &&
+                        e.getMessage().equals("DB error"))
+                .verify();
+
+        verify(technologyRepository).findAll();
+    }
+
+
+    @Test
+    void shouldDeleteTechnologiesByIdsSuccessfully() {
+        List<Long> ids = Arrays.asList(1L, 2L, 3L);
+
+        when(technologyRepository.deleteByIds(ids)).thenReturn(Mono.empty());
+
+        StepVerifier.create(technologyUseCase.deleteByIds(ids))
+                .verifyComplete();
+
+        verify(technologyRepository).deleteByIds(ids);
+    }
+
+    @Test
+    void shouldDeleteWithEmptyList() {
+        List<Long> ids = Collections.emptyList();
+
+        when(technologyRepository.deleteByIds(ids)).thenReturn(Mono.empty());
+
+        StepVerifier.create(technologyUseCase.deleteByIds(ids))
+                .verifyComplete();
+
+        verify(technologyRepository).deleteByIds(ids);
+    }
+
+    @Test
+    void shouldPropagateErrorWhenRepositoryFailsOnDelete() {
+        List<Long> ids = Arrays.asList(1L, 2L);
+
+        when(technologyRepository.deleteByIds(ids)).thenReturn(Mono.error(new RuntimeException("DB error")));
+
+        StepVerifier.create(technologyUseCase.deleteByIds(ids))
+                .expectErrorMatches(e -> e instanceof RuntimeException &&
+                        e.getMessage().equals("DB error"))
+                .verify();
+
+        verify(technologyRepository).deleteByIds(ids);
     }
 }
